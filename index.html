@@ -1,0 +1,219 @@
+<!-- HTML Document Structure -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Metadata for the HTML document -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Title of the webpage -->
+  <title>PepePals Viewer</title>
+
+  <!-- Styles for the webpage -->
+  <style>
+    /* Styles for the main container */
+    #app {
+      font-family: Avenir, Helvetica, Arial, sans-serif;
+      text-align: center;
+      color: #2c3e50;
+      margin: 60px 0;
+    }
+
+    /* Styling for links, buttons, and input elements */
+    a, button, input {
+      color: #4fc08d;
+    }
+
+    /* Styling for buttons */
+    button {
+      background: none;
+      border: solid 1px;
+      border-radius: 2em;
+      font: inherit;
+      padding: 0.75em 2em;
+      margin: 0 auto;
+      margin-top: 24px;
+      cursor: pointer;
+    }
+
+    /* Hover effect for buttons */
+    button:hover {
+      cursor: pointer;
+    }
+
+    /* Styling for input elements and buttons */
+    input, button {
+      display: block;
+      margin: 0 auto;
+      margin-top: 24px;
+    }
+
+    /* Styling for the input field */
+    input {
+      height: 40px;
+      padding: 0 16px;
+      width: 600px;
+      border: 1px solid;
+    }
+
+    /* Styling for the displayed image */
+    img {
+      height: 600px;
+      width: 600px;
+      image-rendering: pixelated;
+      transition: all 1500ms;
+    }
+
+    /* Styling for the background color choices */
+    .background-choices {
+      display: flex;
+      margin: 0 auto;
+      margin-top: 24px;
+      justify-content: center;
+    }
+
+    /* Styling for individual background color choices */
+    .background-choice {
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      margin-right: 16px;
+      border: 2px solid transparent;
+    }
+
+    /* Hover effect for background color choices */
+    .background-choice:hover {
+      border: 2px solid black;
+    }
+
+    /* Responsive styles for smaller screens */
+    @media only screen and (max-width: 480px) {
+      img {
+        width: 240px;
+        height: 240px;
+      }
+
+      input {
+        width: 240px;
+      }
+    }
+  </style>
+
+  <!-- Vue.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+
+<body>
+  <!-- Main application container -->
+  <div id="app">
+    <!-- Heading -->
+    <h1>PepePals Viewer</h1>
+
+    <!-- Displayed image with dynamic source and background style -->
+    <img :src="punkUrl" :style="{ background: background }" />
+
+    <!-- Input field for entering the punk number -->
+    <input v-model="number" type="number" min="1" max="111" />
+
+    <!-- Container for background color choices -->
+    <div class="background-choices">
+      <!-- Individual background color choices -->
+      <div
+        v-for="(background, index) in backgrounds"
+        :key="index"
+        :style="{ background: background }"
+        @click="setBackground(background)"
+        class="background-choice"
+      ></div>
+    </div>
+
+    <!-- Button to download the avatar image -->
+    <button @click="downloadBackground()">Download Avatar</button>
+  </div>
+
+  <!-- Vue.js script -->
+  <script>
+    // Vue.js instance
+    new Vue({
+      el: '#app',
+      // Data properties for the Vue instance
+      data() {
+        return {
+          pepepalsNumber: "1",
+          number: 1,
+          backgrounds: [
+            "#4d4d4d",
+            "#EAD9D9",
+            "#DBB180",
+            "#F0A4BB",
+            "#FDAC7E",
+            "#95554F",
+            "#A64E49",
+            "#638596",
+            "#318DFD",
+            "#f7931a"
+          ],
+          background: ""
+        };
+      },
+      // Computed property for generating the dynamic image source
+      computed: {
+        punkUrl() {
+          return `https://nftstorage.link/ipfs/bafybeicjtnzd37ex7wt5atdpvq66yaohdnkx45pbyjggohsxbphtw6dmzu/${this.pepepalsNumber}.png`;
+        }
+      },
+      // Watcher for changes in the "number" property
+      watch: {
+        number(newValue) {
+          setTimeout(() => {
+            if (this.number === newValue) this.view();
+          }, 800);
+        }
+      },
+      // Methods for handling user interactions
+      methods: {
+        // Updates the displayed image based on the entered number
+        view() {
+          if ((this.number < 1 || this.number > 3333) && this.number !== "") {
+            alert("Invalid PepePals number.");
+          } else {
+            this.pepepalsNumber = this.number.toString().padStart(2, "0");
+          }
+        },
+        // Sets the background color for the image
+        setBackground(bg) {
+          this.background = bg;
+        },
+        // Downloads the image with the chosen background
+        downloadBackground() {
+          const image = new Image();
+          image.crossOrigin = "Anonymous";
+
+          image.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Fill the canvas with the selected background color
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.fillStyle = this.background;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the image on the canvas
+            ctx.drawImage(image, 0, 0);
+
+            // Trigger a download link for the canvas image
+            const downloadLink = document.createElement("a");
+            downloadLink.href = canvas.toDataURL("image/png");
+            downloadLink.download = `PepePals${this.pepepalsNumber}avatar.png`;
+            downloadLink.click();
+          };
+
+          // Set the image source
+          image.src = this.punkUrl;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
