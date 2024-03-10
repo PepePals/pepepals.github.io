@@ -113,7 +113,7 @@
     <img :src="punkUrl" :style="{ background: background }" />
 
     <!-- Input field for entering the punk number -->
-    <input v-model="number" type="number" min="1" max="111" />
+    <input v-model="number" type="number" min="1" max="3333" />
 
     <!-- Container for background color choices -->
     <div class="background-choices">
@@ -177,7 +177,7 @@
           if ((this.number < 1 || this.number > 3333) && this.number !== "") {
             alert("Invalid PepePals number.");
           } else {
-            this.pepepalsNumber = this.number.toString().padStart(2, "0");
+            this.pepepalsNumber = this.number.toString().padStart(1, "0");
           }
         },
         // Sets the background color for the image
